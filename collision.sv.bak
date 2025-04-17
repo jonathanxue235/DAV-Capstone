@@ -14,9 +14,18 @@ module collision #(
     input logic [HEIGHT-1:0] pipe_y,
     output logic collision_out
 );
-logic collision;
+
+always_ff @(posedge clk or negedge reset) begin
+    if (reset) begin
+        collision_out <= 0;
+    end
+    else begin
+        collision_out <= 0;
+    end
+end
+
 always_comb begin
-    if (!reset) begin
+    if (reset) begin
         collision_out = 0;
     end
     if ((bird_x + BIRD_WIDTH >= pipe_x - PIPE_WIDTH || bird_x - BIRD_WIDTH <= pipe_x + PIPE_WIDTH) 
