@@ -1,3 +1,5 @@
+`include "prng.sv"
+`include "collision.sv"
 module game_controller #(
     parameter int SCREEN_WIDTH    = 640, // Screen width in pixels
     parameter int SCREEN_HEIGHT   = 480, // Screen height in pixels
@@ -10,14 +12,15 @@ module game_controller #(
     // Calculate coordinate widths based on screen dimensions
     parameter int CORDW           = $clog2(SCREEN_WIDTH),
     parameter int CORDH           = $clog2(SCREEN_HEIGHT),
-    parameter int BIRD_X          = 500
+  	parameter logic [9:0] BIRD_X          = 500
 ) (
     input logic clk,
     input logic reset,
     input logic start_button,
     input logic [9:0] bird_y,
-    input logic [9:0] pipe_x,
-    input logic [8:0] pipe_y,
+    // input logic [9:0] pipe_x,
+    // input logic [9:0] pipe_y,
+  	output logic collision_out
 );
 localparam logic [1:0] STATE_IDLE = 2'b00;
 localparam logic [1:0] STATE_PLAY = 2'b01;
@@ -26,8 +29,12 @@ localparam logic [1:0] STATE_GAME_OVER = 2'b10;
 logic [1:0] state;
 logic [1:0] next_state;
 
-logic [8:0] pipe_height;
-input logic collision_out;
+// Declare internal signals for pipe position
+logic [9:0] pipe_x_internal;
+logic [9:0] pipe_y_internal;
+
+logic [9:0] pipe_height;
+//logic collision_out;
 
 always_ff @(posedge clk or negedge reset) begin
     if (reset) begin
@@ -40,11 +47,18 @@ end
 
 always_ff @(posedge clk or negedge reset) begin
     if (reset) begin
-        pipe_x <= SCREEN_WIDTH;
-        pipe_y <= pipe_height;
+        pipe_x_internal <= SCREEN_WIDTH;
+        pipe_y_internal <= pipe_height;
     end
     else begin
-        pipe_x <= pipe_x - PIPE_WIDTH;
+        if (state == STATE_PLAY) begin
+             if (pipe_x_internal > PIPE_WIDTH) begin
+                 pipe_x_internal <= pipe_x_internal - 1;
+             end else begin
+                 pipe_x_internal <= SCREEN_WIDTH;
+                 pipe_y_internal <= pipe_height;
+             end
+        end
     end
 end
 
@@ -59,8 +73,7 @@ always_comb begin
             end
         end
         STATE_PLAY: begin
-            // TODO: Replace with collision module
-            if (pipe_x == 0) begin
+            if (collision_out) begin
                 next_state = STATE_GAME_OVER;
             end
             else begin
@@ -75,15 +88,22 @@ always_comb begin
                 next_state = STATE_GAME_OVER;
             end
         end
+        default: next_state = STATE_IDLE;
     endcase
 end
 
 // TODO: PRNG for pipe height generation
-prng pipe_height(.clk(clk), .reset(reset), .prng_out(pipe_height));
+prng pipe_heights(.clk(clk), .reset(reset), .prng_out(pipe_height));
 
 // TOOD: Collision module
-collision collision_module(.clk(clk), .reset(reset), .bird_x(BIRD_X), .bird_y(bird_y), .pipe_x(pipe_x), .pipe_y(pipe_y), .collision_out(collision_out));
-
-
+collision collision_module(
+    .clk(clk),
+    .reset(reset),
+    .bird_x(BIRD_X),
+    .bird_y(bird_y),
+    .pipe_x(pipe_x_internal),
+    .pipe_y(pipe_y_internal),
+    .collision_out(collision_out)
+);
 
 endmodule

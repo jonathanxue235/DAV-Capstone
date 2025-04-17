@@ -1,6 +1,10 @@
 module collision #(
     parameter int WIDTH = 10,
-    parameter int HEIGHT = 10
+    parameter int HEIGHT = 10,
+  	parameter int BIRD_WIDTH      = 20,  // Bird width in pixels
+    parameter int BIRD_HEIGHT     = 20,  // Bird height in pixels
+  	parameter int PIPE_WIDTH	  = 20,
+  	parameter int PIPE_HEIGHT	  = 100
 ) (
     input logic clk,
     input logic reset,
