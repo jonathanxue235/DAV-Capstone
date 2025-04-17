@@ -9,7 +9,8 @@ module game_controller #(
     parameter int BIRD_HEIGHT     = 20,  // Bird height in pixels
     // Calculate coordinate widths based on screen dimensions
     parameter int CORDW           = $clog2(SCREEN_WIDTH),
-    parameter int CORDH           = $clog2(SCREEN_HEIGHT)
+    parameter int CORDH           = $clog2(SCREEN_HEIGHT),
+    parameter int BIRD_X          = 500
 ) (
     input logic clk,
     input logic reset,
@@ -78,10 +79,10 @@ always_comb begin
 end
 
 // TODO: PRNG for pipe height generation
-// prng pipe_height(clk, reset, pipe_height);
+prng pipe_height(.clk(clk), .reset(reset), .prng_out(pipe_height));
 
 // TOOD: Collision module
-// collision collision_module(clk, reset, bird_y, pipe_x, pipe_y, collision_out);
+collision collision_module(.clk(clk), .reset(reset), .bird_x(BIRD_X), .bird_y(bird_y), .pipe_x(pipe_x), .pipe_y(pipe_y), .collision_out(collision_out));
 
 
 

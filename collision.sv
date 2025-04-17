@@ -24,8 +24,8 @@ always_comb begin
     if (reset) begin
         collision_out = 0;
     end
-    if (bird_x + BIRD_WIDTH > pipe_x && bird_x < pipe_x + PIPE_WIDTH &&
-        (bird_y < pipe_y || bird_y > pipe_y + PIPE_HEIGHT)) begin
+    if ((bird_x + BIRD_WIDTH >= pipe_x - PIPE_WIDTH || bird_x - BIRD_WIDTH <= pipe_x + PIPE_WIDTH) 
+    && bird_y + BIRD_HEIGHT < pipe_y - PIPE_HEIGHT && bird_y - BIRD_HEIGHT > pipe_y + PIPE_HEIGHT) begin
         collision_out = 1;
     end
     else begin
