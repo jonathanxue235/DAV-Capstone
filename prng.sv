@@ -1,9 +1,7 @@
-module prng #(
-    parameter int WIDTH = 10
-) (
+module prng (
     input logic clk,
     input logic reset,
-    output logic [WIDTH-1:0] prng_out
+    output logic [9:0] prng_out
 );
 assign prng_out = 500;
 

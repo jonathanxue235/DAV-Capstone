@@ -31,14 +31,10 @@ module testbench(
         .SCREEN_WIDTH(SCREEN_WIDTH),
         .SCREEN_HEIGHT(SCREEN_HEIGHT),
         .PIPE_WIDTH(PIPE_WIDTH),
-        .PIPE_GAP(PIPE_GAP),
-        .PIPE_X_POS(PIPE_X_POS),
-        .PIPE_GAP_Y_POS(PIPE_GAP_Y_POS),
+        .PIPE_HEIGHT(PIPE_GAP),
         .BIRD_WIDTH(BIRD_WIDTH),
         .BIRD_HEIGHT(BIRD_HEIGHT),
-        .CORDW(CORDW),
-        .CORDH(CORDH),
-        .BIRD_X(BIRD_X)
+		  .BIRD_X(BIRD_X)
     ) dut (
         .clk(clk),
         .reset(reset),

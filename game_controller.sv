@@ -2,15 +2,10 @@ module game_controller #(
     parameter logic [9:0] SCREEN_WIDTH    = 640, // Screen width in pixels
     parameter logic [9:0] SCREEN_HEIGHT   = 480, // Screen height in pixels
     parameter logic [9:0] PIPE_WIDTH      = 30,  // Pipe width in pixels
-    parameter logic [9:0] PIPE_GAP        = 100, // Vertical gap between pipes
-    parameter logic [9:0] PIPE_X_POS      = 300, // Horizontal position of the left edge of the pipes
-    parameter logic [9:0] PIPE_GAP_Y_POS  = 190, // Vertical position of the top edge of the gap (0 = top)
+    parameter logic [9:0] PIPE_HEIGHT     = 100, // Vertical gap between pipes
     parameter logic [9:0] BIRD_WIDTH      = 20,  // Bird width in pixels
     parameter logic [9:0] BIRD_HEIGHT     = 20,  // Bird height in pixels
-    // Calculate coordinate widths based on screen dimensions
-    parameter int CORDW           = $clog2(SCREEN_WIDTH),
-    parameter int CORDH           = $clog2(SCREEN_HEIGHT),
-  	parameter logic [9:0] BIRD_X          = 200
+  	 parameter logic [9:0] BIRD_X          = 200
 ) (
     input logic clk,
     input logic reset,
@@ -96,13 +91,15 @@ prng pipe_heights(.clk(clk), .reset(reset), .prng_out(pipe_height));
 
 // TOOD: Collision module
 collision collision_module(
-    .clk(clk),
-    .reset(reset),
-    .bird_x(BIRD_X),
-    .bird_y(bird_y),
-    .pipe_x(pipe_x),
-    .pipe_y(pipe_y),
-    .collision_out(collision_out)
+	.BIRD_WIDTH(BIRD_WIDTH),
+	.BIRD_HEIGHT(BIRD_HEIGHT),
+	.PIPE_WIDTH(PIPE_WIDTH),
+	.PIPE_HEIGHT(PIPE_HEIGHT),
+   .BIRD_X(BIRD_X),
+   .bird_y(bird_y),
+   .pipe_x(pipe_x),
+   .pipe_y(pipe_y),
+   .collision_out(collision_out)
 );
 
 endmodule
