@@ -20,7 +20,10 @@ module game_controller #(
     input logic [9:0] bird_y,
     // input logic [9:0] pipe_x,
     // input logic [9:0] pipe_y,
-  	output logic collision_out
+  	output logic collision_out,
+    output logic [9:0] pipe_x_internal,
+    output logic [9:0] pipe_y_bot,
+    output logic [9:0] pipe_y_top
 );
 localparam logic [1:0] STATE_IDLE = 2'b00;
 localparam logic [1:0] STATE_PLAY = 2'b01;
@@ -35,6 +38,9 @@ logic [9:0] pipe_y_internal;
 
 logic [9:0] pipe_height;
 //logic collision_out;
+
+assign pipe_y_top = pipe_y_internal - PIPE_GAP;
+assign pipe_y_bot = pipe_y_internal + PIPE_GAP;
 
 always_ff @(posedge clk or negedge reset) begin
     if (reset) begin
