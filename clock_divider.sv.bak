@@ -2,15 +2,14 @@ module clock_divider #(
     parameter int DIVISOR = 2
 ) (
     input logic clk,
-	 input logic reset,
     output logic enable
 );
 
 logic [31:0] count;
 
 always_ff @(posedge clk) begin
-    if (!reset) begin
-        enable <= 0;
+    if (reset) begin
+        clk_div <= 0;
     end
     else begin
         if (count == DIVISOR - 1) begin

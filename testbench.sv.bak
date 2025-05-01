@@ -1,8 +1,6 @@
-`timescale 1ns / 1ns
+`timescale 1ns / 1ps
 
-module testbench(
-   output logic collision_out // Output from DUT
-);
+module testbench;
 
     // Parameters from game_controller (adjust if necessary)
     parameter int SCREEN_WIDTH    = 640;
@@ -19,42 +17,36 @@ module testbench(
 
     // Testbench signals
     logic clk;
-	 logic reset;
-	 logic start_button;
-	 logic [9:0] bird_y;
-	 logic [9:0] pipe_x;
-	 logic [9:0] pipe_y;
-	 logic [1:0] state;
+    logic reset;
+    logic start_button;
+    logic [9:0] bird_y;
+    logic collision_out; // Output from DUT
 
     // Instantiate the Device Under Test (DUT)
     game_controller #(
         .SCREEN_WIDTH(SCREEN_WIDTH),
         .SCREEN_HEIGHT(SCREEN_HEIGHT),
         .PIPE_WIDTH(PIPE_WIDTH),
-        .PIPE_HEIGHT(PIPE_GAP),
+        .PIPE_GAP(PIPE_GAP),
+        .PIPE_X_POS(PIPE_X_POS),
+        .PIPE_GAP_Y_POS(PIPE_GAP_Y_POS),
         .BIRD_WIDTH(BIRD_WIDTH),
         .BIRD_HEIGHT(BIRD_HEIGHT),
-		  .BIRD_X(BIRD_X)
+        .CORDW(CORDW),
+        .CORDH(CORDH),
+        .BIRD_X(BIRD_X)
     ) dut (
         .clk(clk),
         .reset(reset),
         .start_button(start_button),
         .bird_y(bird_y),
-		  .pipe_x(pipe_x),
-		  .pipe_y(pipe_y),
-        .collision_out(collision_out),
-		 .state(state) // Connect the output
+        .collision_out(collision_out) // Connect the output
     );
 
     // Clock generation
     initial begin
-        clk = 1;
-		  for (integer i = 0; i < 250; i++) begin
-			#1;
         clk = 0;
-        #1;
-		  clk = 1;
-		end
+        forever #5 clk = ~clk; // 10ns period (100 MHz clock)
     end
 
     // Test sequence
@@ -65,30 +57,37 @@ module testbench(
         bird_y = SCREEN_HEIGHT / 2; // Start bird in the middle
 
         // Apply reset
-        #2 reset = 0; // Assert reset for 10ns
-        #2 reset = 1; // Deassert reset
+        #10 reset = 0; // Assert reset for 10ns
+        #10 reset = 1; // Deassert reset
 
         // Wait for DUT to stabilize after reset
-        #4;
+        #20;
 
         // Press start button
-       // $display("INFO: Pressing start button at time %0t", $time);
+        $display("INFO: Pressing start button at time %0t", $time);
         start_button = 1;
-        #2; // Hold start button for one clock cycle
+        #10; // Hold start button for one clock cycle
         start_button = 0;
 
         // Add more stimulus and checks here
         // Example: Change bird_y based on simulated input
-        #20 bird_y = bird_y - 10;
-        #20 bird_y = bird_y + 20;
+        #100 bird_y = bird_y - 10;
+        #100 bird_y = bird_y + 20;
 
         // Monitor collision
-        //$display("INFO: Collision detected at time %0t", $time);
+        @(posedge collision_out);
+        $display("INFO: Collision detected at time %0t", $time);
 
         // Simulation timeout
-        #100;
-       // $display("INFO: Simulation timeout reached.");
-        $stop;
+        #10000;
+        $display("INFO: Simulation timeout reached.");
+        $finish;
+    end
+
+    // Optional: Dump waveforms
+    initial begin
+        $dumpfile("testbench.vcd");
+        $dumpvars(0, testbench);
     end
 
 endmodule
