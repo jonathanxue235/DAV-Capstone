@@ -19,6 +19,9 @@ module pitch_game_top (
     
 );
 
+logic [9:0] bird_x;
+assign bird_x = 100;
+
 logic [9:0] bird_y;
 
 microphone mic_inst (
@@ -53,8 +56,12 @@ collision collision_inst (
     // Input
     .clk(clk),
     .reset(reset),
+    .bird_x(bird_x),
     .bird_y(bird_y),
+    .bird_width(bird_width),
+    .bird_height(bird_height),
     .pipe_x(pipe_x),
+    .pipe_width(pipe_width),
     .pipe_y_top(pipe_y_top),
     .pipe_y_bot(pipe_y_bot),
 
@@ -70,13 +77,17 @@ clock_divider vga_clock_divider (
 );
 
 
+logic [2:0] input_red;
+logic [2:0] input_green;
+logic [1:0] input_blue;
+
 vga vga_inst (
     // Input
     .vgaclk(vga_clk),
     .rst(reset),
-    .input_red(3'b000),
-    .input_green(3'b000),
-    .input_blue(2'b00),
+    .input_red(input_red),
+    .input_green(input_green),
+    .input_blue(input_blue),
     
     // Output
     .hc_out(hc_out),
@@ -97,7 +108,23 @@ clock_divider game_clock_divider (
 );
 
 
-
+always_comb begin
+    if (bird_x - 20 <= xpos && xpos >= bird_x + 20 && bird_y - 20 <= ypos && bird_y + 20 >= ypos) begin
+        input_red = 3'b111;
+        input_green = 3'b000;
+        input_blue = 2'b00;
+    end
+    else if (pipe_x - 50 <= xpos && xpos >= pipe_x + 50 && (pipe_y_bot >= ypos || pipe_y_top <= ypos)) begin
+        input_red = 3'b000;
+        input_green = 3'b111;
+        input_blue = 2'b00;
+    end
+    else begin
+        input_red = 3'b111;
+        input_green = 3'b111;
+        input_blue = 2'b11;
+    end
+end
 
 
 

@@ -1,7 +1,7 @@
 module position # (
     parameter logic [9:0] PIPE_GAP = 100,
     parameter logic [9:0] PIPE_X_START = 640,
-    parameter logic [9:0] BIRD_X = 100,
+    parameter logic [9:0] BIRD_X = 100
 )(
     input logic clk,
     input logic reset,
@@ -20,7 +20,7 @@ logic [9:0] pipe_y_start;
 prng pipe_y_height (
     .clk(clk),
     .reset(reset),
-    .output(pipe_y_start)
+    .prng_out(pipe_y_start)
 );
 
 // State machine
