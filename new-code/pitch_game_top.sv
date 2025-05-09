@@ -37,14 +37,15 @@ microphone mic_inst (
 logic collided;
 logic position_reset;
 
-assign position_reset = reset | collided;
 
 position position_inst (
     // Input
     .clk(clk),
-    .reset(position_reset),
+    .reset(reset),
     .start_button(start_button),
     .bird_y(bird_y),
+    .collided(collided),
+    .enable(enable),
 
     // Output
     .pipe_x(pipe_x),
@@ -70,9 +71,12 @@ collision collision_inst (
 );
 
 clock_divider vga_clock_divider (
+    // Input
     .clk(clk),
     .reset(reset),
     .divisor(2),
+
+    // Output
     .clk_out(vga_clk)
 );
 

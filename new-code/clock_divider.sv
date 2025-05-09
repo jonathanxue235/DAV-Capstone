@@ -2,6 +2,7 @@ module clock_divider (
     input logic clk,
 	input logic reset,
     input [31:0] divisor,
+    
     output logic clk_out
 );
 
