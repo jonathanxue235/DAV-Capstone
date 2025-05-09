@@ -14,7 +14,7 @@ module pitch_top #(
 )
 (
     input logic clk,
-    input [11:0] mic
+    input [11:0] mic,
 
     output logic hsync,
 	output logic vsync,
@@ -53,7 +53,7 @@ module pitch_top #(
     logic game_clk;
     clock_divider #(
         .DIVISOR(2)
-    ) vga_clk(
+    ) vga_clk_module(
         .clk(clk),
         .reset(1'b0),
         .clk_out(vga_clk)
@@ -62,7 +62,7 @@ module pitch_top #(
 
     clock_divider #(
         .DIVISOR(10000000)
-    ) game_clk(
+    ) game_clk_module(
         .clk(clk),
         .reset(1'b0),
         .clk_out(game_clk)

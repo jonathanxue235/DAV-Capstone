@@ -25,13 +25,17 @@ module testbench(
 	 logic [9:0] pipe_x;
 	 logic [9:0] pipe_y;
 	 logic [1:0] state;
+     logic [9:0] pipe_y_bot;
+     logic [9:0] pipe_y_top;
+     assign pipe_y_bot = pipe_y - PIPE_GAP;
+     assign pipe_y_top = pipe_y + PIPE_GAP;
 
     // Instantiate the Device Under Test (DUT)
     game_controller #(
         .SCREEN_WIDTH(SCREEN_WIDTH),
         .SCREEN_HEIGHT(SCREEN_HEIGHT),
         .PIPE_WIDTH(PIPE_WIDTH),
-        .PIPE_HEIGHT(PIPE_GAP),
+        .PIPE_GAP(PIPE_GAP),
         .BIRD_WIDTH(BIRD_WIDTH),
         .BIRD_HEIGHT(BIRD_HEIGHT),
 		  .BIRD_X(BIRD_X)
@@ -40,8 +44,9 @@ module testbench(
         .reset(reset),
         .start_button(start_button),
         .bird_y(bird_y),
-		  .pipe_x(pipe_x),
-		  .pipe_y(pipe_y),
+		  .pipe_x_internal(pipe_x),
+		  .pipe_y_bot(pipe_y_bot),
+          .pipe_y_top(pipe_y_top),
         .collision_out(collision_out),
 		 .state(state) // Connect the output
     );

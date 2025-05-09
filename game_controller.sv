@@ -2,7 +2,7 @@ module game_controller #(
     parameter logic [9:0] SCREEN_WIDTH    = 640, // Screen width in pixels
     parameter logic [9:0] SCREEN_HEIGHT   = 480, // Screen height in pixels
     parameter logic [9:0] PIPE_WIDTH      = 30,  // Pipe width in pixels
-    parameter logic [9:0] PIPE_HEIGHT     = 100, // Vertical gap between pipes
+    parameter logic [9:0] PIPE_GAP        = 100, // Vertical gap between pipes
     parameter logic [9:0] BIRD_WIDTH      = 20,  // Bird width in pixels
     parameter logic [9:0] BIRD_HEIGHT     = 20,  // Bird height in pixels
   	 parameter logic [9:0] BIRD_X          = 200
@@ -22,11 +22,11 @@ localparam logic [1:0] STATE_IDLE = 2'b00;
 localparam logic [1:0] STATE_PLAY = 2'b01;
 localparam logic [1:0] STATE_GAME_OVER = 2'b10;
 
-//logic [1:0] state;
+logic [1:0] state;
 logic [1:0] next_state;
 
 // Declare internal signals for pipe position
-logic [9:0] pipe_x_internal;
+// logic [9:0] pipe_x_internal;
 logic [9:0] pipe_y_internal;
 
 logic [9:0] pipe_height;
@@ -46,16 +46,16 @@ end
 
 always_ff @(posedge clk) begin
     if (!reset) begin
-			pipe_x <= SCREEN_WIDTH;
-			pipe_y <= pipe_height;
+			pipe_x_internal <= SCREEN_WIDTH;
+			pipe_y_internal <= pipe_height;
     end
     else begin
         if (state == STATE_PLAY) begin
-             if (pipe_x > 0) begin
-                 pipe_x <= pipe_x - 20;
+             if (pipe_x_internal > 0) begin
+                 pipe_x_internal <= pipe_x_internal - 20;
              end else begin
-                 pipe_x <= SCREEN_WIDTH;
-                 pipe_y <= pipe_height;
+                 pipe_x_internal <= SCREEN_WIDTH;
+                 pipe_y_internal <= pipe_height;
              end
         end
     end
@@ -99,11 +99,11 @@ collision collision_module(
 	.BIRD_WIDTH(BIRD_WIDTH),
 	.BIRD_HEIGHT(BIRD_HEIGHT),
 	.PIPE_WIDTH(PIPE_WIDTH),
-	.PIPE_HEIGHT(PIPE_HEIGHT),
+	.PIPE_HEIGHT(PIPE_GAP),
    .BIRD_X(BIRD_X),
    .bird_y(bird_y),
-   .pipe_x(pipe_x),
-   .pipe_y(pipe_y),
+   .pipe_x(pipe_x_internal),
+   .pipe_y(pipe_y_internal),
    .collision_out(collision_out)
 );
 
